@@ -15,4 +15,9 @@ class Module extends Model
         "updated_at",
         "deleted_at"
     ];
+
+    public function profs()
+    {
+        return $this->belongsToMany(User::class,'module_profs','module_id','prof_id');
+    }
 }

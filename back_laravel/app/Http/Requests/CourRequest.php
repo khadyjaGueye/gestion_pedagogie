@@ -22,10 +22,11 @@ class CourRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "nbreHeure"=>'required',
-           "classe_id"=>'required|exists:classes,id',
-            "annee_scolaire_id"=>'required|exists:annee_scolaires,id',
-            "semestre_id"=>'required|exists:semestres,id',
+            "nbreHeure" => 'required',
+            // "classe_id" => 'required|exists:cours,id',
+            // "module_id" => 'required|exists:cours,id',
+            // "semestre_id" => 'required|exists:cours,id',
+            // "prof_id" => 'required|exists:cours,id',
         ];
     }
 
@@ -34,8 +35,9 @@ class CourRequest extends FormRequest
         return [
             'nbreHeure.required' => 'le nombre d\'heure doit etre requis',
             'module_prof_id.required' => "le module et le prof doit etre requis",
-            'annee_scolaire_id.required' => "l'\annee doit etre requis",
+            'module_id.required' => "l'\annee doit etre requis",
             'semestre_id.required' => "le semestre doit etre requis",
+            'prof_id.required' => "le prof doit etre requis",
         ];
     }
 }

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CourRequest;
+use App\Models\Classe;
 use App\Models\Cour;
 use App\Models\CourClasse;
 use App\Models\Module;
+use App\Models\ModuleProf;
+use App\Models\Semestre;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +20,20 @@ class CourController extends Controller
      */
     public function index()
     {
-        //
+        $classes = Classe::all();
+        $profs = User::where('role', 'prof')->get();
+        $semestres = Semestre::all();
+        $modules = Module::with('profs')->get();
+        $cours = Cour::all();
+        return response()->json([
+            "data" => [
+                "modules" => $modules,
+                "classes" => $classes,
+                "profs" => $profs,
+                "semestres" => $semestres,
+                "cours" => $cours
+            ]
+        ]);
     }
 
     /**
@@ -34,27 +50,30 @@ class CourController extends Controller
     public function store(CourRequest $request)
     {
         try {
-            DB::beginTransaction();
 
-            $prof = User::where('role','prof')->where('id',$request->prof_id)->first();
-            $module = Module::where('id',$request->module_id)->first();
-            return $module;
-            $cours = Cour::create([
-                "nbreHeure" => $request->nbreHeure,
-                "semestre_id"=>$request->semestre_id,
-                "annee_scolaire_id"=>$request->annee_scolaire_id,
-                "module_prof_id"=>$request->module_prof_id
-            ]);
+            $prof = User::where('role', 'prof')
+                ->where('id', $request->prof_id)->first();
+            //return $prof;
+            $module = Module::where('id', $request->module_id)->first();
+            $prof_module =  ModuleProf::where('prof_id', $prof->id)
+                ->where('module_id', $module->id)->first();
+            if ($prof_module) {
+                $cours = Cour::create([
+                    "nbreHeure" => $request->nbreHeure,
+                    "semestre_id" => $request->semestre_id,
+                    "annee_scolaire_id" => 1,
+                    "module_prof_id" => $prof_module->id,
+                    "classe_id" => $request->classe_id
+                ]);
+            }else{
+                return response()->json([
+                    "message" => "le prof n'existe pas"
+                ]);
+            }
 
-            $classeCour = new CourClasse;
-            $classeCour->cour_id = $cours->id;
-            $classeCour->classe_id = $request->classe_id;
-            $classeCour->save();
-            DB::commit();
             return response()->json(
                 ["data" => [
-                    "cours" => $cours,
-                    "classeCour" => $classeCour
+                    "cours" => $cours
                 ]]
             );
         } catch (\Throwable $th) {
