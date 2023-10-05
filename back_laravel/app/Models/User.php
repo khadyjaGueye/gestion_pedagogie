@@ -56,4 +56,23 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Module::class);
     }
+
+    public function isAvailable($date, $heureDebut, $heureFin)
+    {
+        // Récupérer les autres sessions où ce prof intervient
+        $otherSessions = Session::where('prof_id', $this->id)
+            ->whereDate('dateCours', $date)
+            ->get();
+
+        foreach ($otherSessions as $session) {
+
+            // Si une autre session chevauche cette plage horaire
+            if ($session->heureDebut < $heureFin && $session->heureFin > $heureDebut) {
+                // Le professeur n'est pas disponible
+                return false;
+            }
+        }
+        // Le professeur est disponible
+        return true;
+    }
 }

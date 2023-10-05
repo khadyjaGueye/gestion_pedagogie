@@ -20,4 +20,13 @@ class Module extends Model
     {
         return $this->belongsToMany(User::class,'module_profs','module_id','prof_id');
     }
+
+    // public function getProfByIdModuleProf($id){
+    //     $prof = Module::find($id)->pr;
+    // }
+
+    public function prof()
+    {
+        return $this->belongs(User::class,'prof_id');
+    }
 }

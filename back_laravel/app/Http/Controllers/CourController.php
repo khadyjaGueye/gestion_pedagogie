@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CourRequest;
+use App\Http\Resources\CourResource;
 use App\Models\Classe;
 use App\Models\Cour;
 use App\Models\CourClasse;
@@ -21,7 +22,7 @@ class CourController extends Controller
     public function index()
     {
         $classes = Classe::all();
-        $profs = User::where('role', 'prof')->get();
+        // $profs = User::where('role', 'prof')->get();
         $semestres = Semestre::all();
         $modules = Module::with('profs')->get();
         $cours = Cour::all();
@@ -29,9 +30,10 @@ class CourController extends Controller
             "data" => [
                 "modules" => $modules,
                 "classes" => $classes,
-                "profs" => $profs,
+                //"profs" => $profs,
                 "semestres" => $semestres,
-                "cours" => $cours
+               // "cours"=>$cours
+                "cours" => CourResource::collection($cours),
             ]
         ]);
     }

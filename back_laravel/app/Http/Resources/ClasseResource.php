@@ -2,11 +2,10 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Module;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CourResource extends JsonResource
+class ClasseResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,11 +16,7 @@ class CourResource extends JsonResource
     {
         return [
             "id"=>$this->id,
-            "nbreHeure"=>$this->nbreHeure,
-            "prof"=>$this->module_prof->prof,
-            "module"=>$this->module_prof->module,
-            "classe"=>new ClasseResource($this->classe),
-            "semestre"=>new SemestreResource($this->semestre),
+            "nom"=>$this->nom
         ];
     }
 }

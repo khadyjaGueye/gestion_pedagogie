@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cour extends Model
+class Session extends Model
 {
     use HasFactory;
 
@@ -15,15 +15,14 @@ class Cour extends Model
         "updated_at",
         "deleted_at"
     ];
-    public function module_prof(){
-        return $this->belongsTo(ModuleProf::class);
-    }
-    public function semestre(){
-        return $this->belongsTo(Semestre::class);
-    }
-    public function classe(){
-        return $this->belongsTo(Classe::class);
-    }
 
-
+    public function cour(){
+        return $this->belongsTo(Cour::class);
+    }
+    public function user(){
+        return $this->belongsTo(User::class,'prof_id');
+    }
+    public function salle(){
+        return $this->belongsTo(Salle::class);
+    }
 }

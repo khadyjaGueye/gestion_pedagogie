@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class ModuleProf extends Model
 {
     use HasFactory;
+
+    public function prof(){
+        return $this->belongsTo(User::class,"prof_id");
+    }
+    public function module(){
+        return $this->belongsTo(Module::class);
+    }
 }

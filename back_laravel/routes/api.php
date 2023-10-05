@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CourController;
 use App\Http\Controllers\ModuleController;
+use App\Http\Controllers\SessionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,3 +26,6 @@ Route::get("/cours",[CourController::class,'index']);
 
 
 Route::get('/module/{id}',[ModuleController::class,'getProf']);
+
+Route::get('/session',[SessionController::class,'index']);
+Route::post('/session',[SessionController::class,'store']);
