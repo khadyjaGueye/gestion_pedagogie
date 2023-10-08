@@ -15,15 +15,20 @@ class Cour extends Model
         "updated_at",
         "deleted_at"
     ];
-    public function module_prof(){
+    public function module_prof()
+    {
         return $this->belongsTo(ModuleProf::class);
     }
-    public function semestre(){
+    public function semestre()
+    {
         return $this->belongsTo(Semestre::class);
     }
-    public function classe(){
+    public function classe()
+    {
         return $this->belongsTo(Classe::class);
     }
-
-
+    public function sessions()
+    {
+        return $this->hasMany(Session::class);
+    }
 }

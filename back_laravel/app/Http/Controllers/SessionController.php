@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\SessionResource;
+use App\Models\Classe;
 use App\Models\Cour;
+use App\Models\ModuleProf;
 use App\Models\Salle;
+use App\Models\Semestre;
 use App\Models\Session;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -20,9 +23,11 @@ class SessionController extends Controller
     public function index()
     {
         $sessions = Session::all();
+        $semestres = Semestre::all();
         return response()->json([
             "data" => [
-                "sessions" => SessionResource::collection($sessions)
+                "sessions" => SessionResource::collection($sessions),
+                "semestres" => $semestres
             ]
         ]);
     }
@@ -40,45 +45,47 @@ class SessionController extends Controller
      */
     public function store(Request $request)
     {
-        $nbreHeureCoursTotal = Cour::find($request->cour_id)->nbreHeure;
-        //return $request->hDedut;
-        //$sessions = Session::all();
-        // $totalDuration = 0;
-        // foreach ($sessions as $session) {
-        //     $totalDuration += $session->duree;
-        // }
+        $module_prof = ModuleProf::where("prof_id", $request->prof_id)
+            ->where("module_id", $request->module_id)->first()->id;
+        $cours = Cour::where("module_prof_id", $module_prof)->first();
+         //return $cours;
+        if ($request->classe_id !=  $cours->classe_id) {
+            return Response::HTTP_NOT_FOUND;
+        }
+
         $totalDuration = Session::sum('duree');
-        if ($totalDuration > $nbreHeureCoursTotal) {
-           //  return Response::;
+        if ($totalDuration > $cours->nbreHeure) {
+            return Response::HTTP_NOT_FOUND;
         }
         if ($request->etat == true) {
             $salle = Salle::find($request->salle_id);
-           // return $salle;
+            // return $salle;
             if (!$salle->isAvailable($request->dateCours, $request->hDedut, $request->hFin)) {
-               // return error();
+                // return error();
             }
         }
         $prof = User::find($request->prof_id);
-        if(!$prof->isAvailable($request->dateCours, $request->hDedut, $request->hFin)) {
-           // return error();
-          }
-          $session = Session::create($request->all());
-          return response()->json([
-            "data"=>[
-                "session"=> new SessionResource($session)
-            ]
-          ]);
+        if (!$prof->isAvailable($request->dateCours, $request->hDedut, $request->hFin)) {
+            // return error();
+        }
+        $data = [
+            'dateCours' => $request->dateCours,
+            'hDedut' => $request->hDedut,
+            'salle_id'=>$request->salle_id,
+            'hFin' => $request->hFin,
+            "duree" => $request->hFin - $request->hDedut,
+            'etat' => $request->etat,
+            "cour_id" => $cours->id,
+        ];
+        $session = new Session();
+        $session->fill($data);
+        $session->save();
 
-        // $session = Session::create([
-        //     "dateCours" => $request->dateCours,
-        //     "hDedut" => $request->hDedut,
-        //     "hFin" => $request->hFin,
-        //     "duree" => $request->hFin - $request->hDedut,
-        //     "etat" => $request->etat,
-        //     "salle_id" => $request->salle_id,
-        //     "cour_id" => $request->cour_id,
-        //     "prof_id" => $request->prof_id
-        // ]);
+        return response()->json([
+            "data" => [
+                "session" => new SessionResource($session)
+            ]
+        ]);
     }
 
     /**

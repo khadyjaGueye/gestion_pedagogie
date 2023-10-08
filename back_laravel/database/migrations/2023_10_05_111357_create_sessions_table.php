@@ -22,7 +22,6 @@ return new class extends Migration
             $table->boolean('etat')->default(true);
             $table->foreignIdFor(Salle::class)->constrained();
             $table->foreignIdFor(Cour::class)->constrained();
-            $table->foreignId("prof_id")->constrained("users")->nulable();
             $table->timestamps();
         });
     }

@@ -57,22 +57,28 @@ class User extends Authenticatable
         return $this->belongsToMany(Module::class);
     }
 
-    public function isAvailable($date, $heureDebut, $heureFin)
+    function isAvailable($date, $heureDebut, $heureFin)
     {
-        // Récupérer les autres sessions où ce prof intervient
-        $otherSessions = Session::where('prof_id', $this->id)
-            ->whereDate('dateCours', $date)
-            ->get();
-
-        foreach ($otherSessions as $session) {
-
-            // Si une autre session chevauche cette plage horaire
-            if ($session->heureDebut < $heureFin && $session->heureFin > $heureDebut) {
-                // Le professeur n'est pas disponible
-                return false;
+        // Récupérer les autres sessions
+        $sessions = Session::whereDate('dateCours', $date)->get();
+        foreach ($sessions as $session) {
+            // Récupérer cours et module_prof
+            $cours = $session->cours;
+            $moduleProf = $cours->module_prof;
+            if ($moduleProf->prof_id == $this->id) {
+                // Vérifier chevauchement directement
+                if ($this->checkOverlap($session, $heureDebut, $heureFin)) {
+                    return false;
+                }
             }
         }
-        // Le professeur est disponible
         return true;
+    }
+    function checkOverlap($session1, $heureDebut2, $heureFin2)
+    {
+        if ($session1->heureDebut < $heureFin2 && $session1->heureFin > $heureDebut2) {
+            return true;
+        }
+        return false;
     }
 }

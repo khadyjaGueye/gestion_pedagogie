@@ -16,7 +16,7 @@ class Session extends Model
         "deleted_at"
     ];
 
-    public function cour(){
+    public function cours(){
         return $this->belongsTo(Cour::class);
     }
     public function user(){
