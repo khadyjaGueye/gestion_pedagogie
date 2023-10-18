@@ -57,6 +57,10 @@ class User extends Authenticatable
         return $this->belongsToMany(Module::class);
     }
 
+    public function classe(){
+        return $this->belongsToMany(Classe::class);
+    }
+
     function isAvailable($date, $heureDebut, $heureFin)
     {
         // Récupérer les autres sessions

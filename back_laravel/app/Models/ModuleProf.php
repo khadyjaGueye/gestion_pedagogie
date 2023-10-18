@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class ModuleProf extends Model
 {
     use HasFactory;
+    protected $hidden = [
+        "created_at",
+        "updated_at",
+    ];
 
     public function prof()
     {

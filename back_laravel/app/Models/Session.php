@@ -16,11 +16,11 @@ class Session extends Model
         "deleted_at"
     ];
 
-    public function cours(){
+    public function cour(){
         return $this->belongsTo(Cour::class);
     }
     public function user(){
-        return $this->belongsTo(User::class,'prof_id');
+        return $this->belongsTo(User::class,'prof_id','users');
     }
     public function salle(){
         return $this->belongsTo(Salle::class);

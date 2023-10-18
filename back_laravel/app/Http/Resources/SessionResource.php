@@ -23,7 +23,7 @@ class SessionResource extends JsonResource
             "etat" => $this->etat,
             "salle" => new SalleResource($this->salle),
             "cour" => new CourResource($this->cour),
-            "prof" => new ProfResource($this->user),
+            //"prof" => new ProfResource($this->user),
         ];
     }
 }

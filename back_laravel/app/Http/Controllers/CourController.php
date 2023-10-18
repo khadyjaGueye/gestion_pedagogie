@@ -9,6 +9,7 @@ use App\Models\Cour;
 use App\Models\CourClasse;
 use App\Models\Module;
 use App\Models\ModuleProf;
+use App\Models\Salle;
 use App\Models\Semestre;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -22,7 +23,8 @@ class CourController extends Controller
     public function index()
     {
         $classes = Classe::all();
-        // $profs = User::where('role', 'prof')->get();
+        $prof = User::where("role", "prof")->get();
+        $salles = Salle::all();
         $semestres = Semestre::all();
         $modules = Module::with('profs')->get();
         $cours = Cour::all();
@@ -30,9 +32,9 @@ class CourController extends Controller
             "data" => [
                 "modules" => $modules,
                 "classes" => $classes,
-                //"profs" => $profs,
+                "salles" => $salles,
                 "semestres" => $semestres,
-               // "cours"=>$cours
+                "profs" => $prof,
                 "cours" => CourResource::collection($cours),
             ]
         ]);
@@ -67,7 +69,7 @@ class CourController extends Controller
                     "module_prof_id" => $prof_module->id,
                     "classe_id" => $request->classe_id
                 ]);
-            }else{
+            } else {
                 return response()->json([
                     "message" => "le prof n'existe pas"
                 ]);

@@ -16,9 +16,9 @@ return new class extends Migration
         Schema::create('sessions', function (Blueprint $table) {
             $table->id();
             $table->date("dateCours");
-            $table->integer('hDedut');
-            $table->integer('hFin');
-            $table->integer('duree');
+            $table->time('hDedut');
+            $table->time('hFin');
+            $table->time('duree');
             $table->boolean('etat')->default(true);
             $table->foreignIdFor(Salle::class)->constrained();
             $table->foreignIdFor(Cour::class)->constrained();
